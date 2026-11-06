@@ -1,0 +1,358 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+        radial-gradient(ellipse at center, #681400, #26000a 60%, #080008);
+    color: white;
+    font-family: Georgia, serif;
+    text-align: center;
+}
+
+#fireworks {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.main {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    padding: 35px 15px;
+}
+
+.top-text {
+    color: #ffda75;
+    letter-spacing: 5px;
+    font-size: 13px;
+    animation: glow 2s infinite alternate;
+}
+
+.heading {
+    margin-top: 30px;
+    font-size: clamp(35px, 8vw, 75px);
+    background: linear-gradient(
+        90deg,
+        #fff7bd,
+        #ffae00,
+        #fff,
+        #ffcf40
+    );
+    background-size: 300%;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: shine 5s linear infinite;
+    filter: drop-shadow(0 0 15px orange);
+}
+
+.subtitle {
+    margin-top: 15px;
+    color: #ffdfa5;
+    font-size: 17px;
+}
+
+/* Gift */
+
+.gift-area {
+    position: relative;
+    width: 230px;
+    height: 220px;
+    margin: 100px auto 35px;
+    perspective: 800px;
+    animation: floating 3s infinite ease-in-out;
+}
+
+.gift-glow {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    left: -15px;
+    top: -20px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 190, 0, .35),
+        transparent 70%
+    );
+    animation: pulse 2s infinite;
+}
+
+.gift-box {
+    position: absolute;
+    width: 210px;
+    height: 155px;
+    left: 10px;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        #ff1744,
+        #a00021,
+        #ff1744
+    );
+    border: 3px solid gold;
+    border-radius: 8px;
+    box-shadow: 0 15px 40px #000;
+}
+
+.box-front {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 42%,
+        gold 42%,
+        gold 58%,
+        transparent 58%
+    );
+}
+
+.box-ribbon {
+    position: absolute;
+    top: 0;
+    left: 42%;
+    width: 16%;
+    height: 100%;
+    background: gold;
+}
+
+.box-lid {
+    position: absolute;
+    width: 240px;
+    height: 48px;
+    left: -15px;
+    top: -42px;
+    border: 3px solid #fff0a0;
+    border-radius: 9px;
+    background: linear-gradient(
+        90deg,
+        #ffca28,
+        #ff8800,
+        #ffd54f
+    );
+    box-shadow: 0 0 25px gold;
+    z-index: 3;
+    transform-origin: left bottom;
+    transition: transform 1.3s cubic-bezier(.2,.8,.2,1);
+}
+
+.lid-ribbon {
+    width: 30px;
+    height: 100%;
+    margin: auto;
+    background: #ff1744;
+}
+
+.bow {
+    position: absolute;
+    top: -55px;
+    left: 95px;
+    font-size: 55px;
+}
+
+.gift-sparkle {
+    position: absolute;
+    right: -20px;
+    top: -45px;
+    font-size: 35px;
+    animation: sparkle 1.5s infinite;
+}
+
+.gift-area.opened {
+    animation: giftShake .6s ease;
+}
+
+.gift-area.opened .box-lid {
+    transform: translate(-35px, -130px) rotate(-35deg);
+}
+
+.instruction {
+    color: #ffda92;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+/* Button */
+
+#openBtn {
+    padding: 18px 35px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #fff2a0;
+    border-radius: 50px;
+    color: #571000;
+    background: linear-gradient(
+        45deg,
+        #fff1a8,
+        #ffb300,
+        #ffdf75
+    );
+    box-shadow: 0 0 20px gold, 0 0 50px #ff7500;
+    cursor: pointer;
+    animation: buttonPulse 1.8s infinite;
+    transition: .3s;
+}
+
+#openBtn:hover {
+    transform: scale(1.12);
+}
+
+#countdown {
+    font-size: 100px;
+    color: gold;
+    font-weight: bold;
+    text-shadow: 0 0 35px orange;
+}
+
+#celebration {
+    display: none;
+    padding: 20px 10px;
+    animation: reveal 1.5s ease forwards;
+}
+
+#happyTitle {
+    font-size: clamp(45px, 10vw, 100px);
+    font-weight: bold;
+    background: linear-gradient(
+        90deg,
+        white,
+        gold,
+        orange,
+        white,
+        gold
+    );
+    background-size: 300%;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: shine 3s infinite, glow 1s infinite alternate;
+}
+
+.big-stars {
+    font-size: 40px;
+    margin-bottom: 20px;
+    animation: sparkle 1s infinite;
+}
+
+.diyas {
+    font-size: 50px;
+    margin: 20px;
+    animation: floating 2s infinite;
+}
+
+#wish {
+    max-width: 700px;
+    margin: 25px auto;
+    font-size: clamp(20px, 4vw, 32px);
+    line-height: 1.7;
+    color: #fff0bd;
+    text-shadow: 0 0 15px orange;
+}
+
+#wish span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: letterReveal .5s forwards;
+}
+
+.final-message {
+    color: gold;
+    font-size: 22px;
+    margin: 25px;
+    animation: glow 1.5s infinite alternate;
+}
+
+.celebration-icons {
+    font-size: 40px;
+    margin: 20px;
+    animation: floating 2s infinite;
+}
+
+.share {
+    margin-top: 60px;
+    padding-bottom: 35px;
+}
+
+.share p {
+    color: gold;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+.share button {
+    padding: 12px 22px;
+    border: 1px solid gold;
+    border-radius: 30px;
+    margin: 7px;
+    color: white;
+    background: #8b1800;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.share button:hover {
+    background: #ff9500;
+    transform: translateY(-5px);
+}
+
+/* Animations */
+
+@keyframes floating {
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes pulse {
+    50% { transform: scale(1.3); opacity: .5; }
+}
+
+@keyframes sparkle {
+    50% { opacity: .3; transform: scale(1.3) rotate(20deg); }
+}
+
+@keyframes shine {
+    to { background-position: 300%; }
+}
+
+@keyframes glow {
+    to { text-shadow: 0 0 30px gold, 0 0 60px orange; }
+}
+
+@keyframes buttonPulse {
+    50% { box-shadow: 0 0 40px gold, 0 0 80px orange; }
+}
+
+@keyframes giftShake {
+    25% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+@keyframes reveal {
+    from { opacity: 0; transform: scale(.2); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes letterReveal {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width: 500px) {
+    .gift-area {
+        margin-top: 85px;
+    }
+
+    .share button {
+        padding: 10px 15px;
+    }
+}
