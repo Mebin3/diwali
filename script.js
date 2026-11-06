@@ -1,69 +1,84 @@
 
 const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: true });
+
+let particles = [];
+let opened = false;
 
 function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    const dpr = Math.min(
+        window.devicePixelRatio || 1,
+        1.5
+    );
+
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 resize();
+
 window.addEventListener("resize", resize);
 
-let particles = [];
-
 const colors = [
-    "#ff0000",
     "#ffd700",
-    "#ff7700",
+    "#ff9800",
+    "#ff4444",
     "#ffffff",
-    "#ff00ff",
-    "#00ffff",
-    "#00ff66"
+    "#ff55cc"
 ];
 
-// Firecracker explosion
+// LIGHTWEIGHT EXPLOSION
 
-function explosion(x, y, power = 120) {
+function explosion(x, y, amount = 30) {
 
-    for (let i = 0; i < power; i++) {
+    const maxParticles = 220;
+
+    if (particles.length > maxParticles - amount) return;
+
+    for (let i = 0; i < amount; i++) {
 
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 8 + 1;
+        const speed = Math.random() * 4 + 1;
 
         particles.push({
-            x: x,
-            y: y,
+            x,
+            y,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            life: 100,
+            life: 55,
             color: colors[Math.floor(Math.random() * colors.length)],
-            size: Math.random() * 4 + 1
+            size: Math.random() * 2 + 1
         });
     }
 }
 
-// Firework animation
+// ANIMATION
 
 function animate() {
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    particles.forEach((p, i) => {
+    for (let i = particles.length - 1; i >= 0; i--) {
+
+        const p = particles[i];
 
         p.x += p.vx;
         p.y += p.vy;
 
-        p.vx *= .99;
-        p.vy *= .99;
-        p.vy += .035;
+        p.vx *= .985;
+        p.vy *= .985;
+        p.vy += .025;
 
         p.life--;
 
-        ctx.globalAlpha = p.life / 100;
+        ctx.globalAlpha = Math.max(0, p.life / 55);
         ctx.fillStyle = p.color;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = p.color;
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -72,41 +87,38 @@ function animate() {
         if (p.life <= 0) {
             particles.splice(i, 1);
         }
-
-    });
+    }
 
     ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
 
     requestAnimationFrame(animate);
 }
 
 animate();
 
-// Background fireworks
+// BACKGROUND FIREWORKS
 
 setInterval(() => {
 
-    if (!document.hidden) {
+    if (!opened && !document.hidden) {
+
         explosion(
-            Math.random() * canvas.width,
-            Math.random() * canvas.height * .6,
-            65
+            Math.random() * window.innerWidth,
+            Math.random() * window.innerHeight * .4,
+            16
         );
     }
 
-}, 1800);
+}, 3500);
 
 
-// Gift opening sequence
+// GIFT OPENING
 
 const openBtn = document.getElementById("openBtn");
 const gift = document.getElementById("gift");
 const countdown = document.getElementById("countdown");
 const instruction = document.getElementById("instruction");
 const celebration = document.getElementById("celebration");
-
-let opened = false;
 
 openBtn.addEventListener("click", () => {
 
@@ -131,33 +143,35 @@ openBtn.addEventListener("click", () => {
 
             countdown.innerText = number;
 
-            explosion(
-                canvas.width / 2,
-                canvas.height / 2,
-                40
-            );
-
         } else {
 
             clearInterval(timer);
 
             countdown.innerText = "✨";
 
-            // Massive opening explosion
+            // GOLDEN POPPER
 
-            for (let i = 0; i < 18; i++) {
+            explosion(
+                window.innerWidth / 2,
+                window.innerHeight / 2,
+                65
+            );
 
-                setTimeout(() => {
+            setTimeout(() => {
+                explosion(
+                    window.innerWidth * .25,
+                    window.innerHeight * .35,
+                    40
+                );
+            }, 300);
 
-                    explosion(
-                        Math.random() * canvas.width,
-                        Math.random() * canvas.height * .75,
-                        160
-                    );
-
-                }, i * 180);
-
-            }
+            setTimeout(() => {
+                explosion(
+                    window.innerWidth * .75,
+                    window.innerHeight * .35,
+                    40
+                );
+            }, 650);
 
             setTimeout(() => {
 
@@ -170,16 +184,17 @@ openBtn.addEventListener("click", () => {
                     block: "center"
                 });
 
-            }, 1200);
+                startCelebration();
 
+            }, 850);
         }
 
-    }, 1000);
-
+    }, 850);
 });
 
 
-// Beautiful letter-by-letter message
+// LETTER-BY-LETTER MESSAGE
+// IMPORTANT: WORDS WILL NOT BREAK BETWEEN LINES
 
 function showMessage() {
 
@@ -190,48 +205,74 @@ function showMessage() {
 
     wish.innerHTML = "";
 
-    [...text].forEach((letter, index) => {
+    const words = text.split(" ");
 
-        const span = document.createElement("span");
+    let letterIndex = 0;
 
-        span.textContent = letter === " " ? "\u00A0" : letter;
+    words.forEach((word) => {
 
-        span.style.animationDelay = (index * .035) + "s";
+        const wordContainer = document.createElement("span");
 
-        wish.appendChild(span);
+        wordContainer.className = "word";
+
+        [...word].forEach((letter) => {
+
+            const span = document.createElement("span");
+
+            span.className = "letter";
+            span.textContent = letter;
+
+            span.style.animationDelay =
+                (letterIndex * .035) + "s";
+
+            wordContainer.appendChild(span);
+
+            letterIndex++;
+
+        });
+
+        wish.appendChild(wordContainer);
 
     });
-
-    // More fireworks during celebration
-
-    let count = 0;
-
-    const celebrationFireworks = setInterval(() => {
-
-        explosion(
-            Math.random() * canvas.width,
-            Math.random() * canvas.height * .7,
-            150
-        );
-
-        count++;
-
-        if (count >= 20) {
-            clearInterval(celebrationFireworks);
-        }
-
-    }, 450);
 
 }
 
 
-// Social sharing
+// CELEBRATION FIREWORKS
+
+function startCelebration() {
+
+    let count = 0;
+
+    const timer = setInterval(() => {
+
+        if (!document.hidden) {
+
+            explosion(
+                Math.random() * window.innerWidth,
+                Math.random() * window.innerHeight * .4,
+                28
+            );
+        }
+
+        count++;
+
+        if (count >= 6) {
+            clearInterval(timer);
+        }
+
+    }, 1300);
+}
+
+
+// SOCIAL SHARING
 
 function share(platform) {
 
     const url = window.location.href;
 
-    const text = "🪔 Happy Diwali! A beautiful surprise is waiting for you! 🎆";
+    const text =
+        "🪔 Happy Diwali! A beautiful surprise is waiting for you! 🎆";
 
     if (platform === "whatsapp") {
 
@@ -268,7 +309,5 @@ function share(platform) {
             alert("Copy the website link and share it on Instagram!");
 
         }
-
     }
-
 }
